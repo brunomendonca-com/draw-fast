@@ -129,7 +129,12 @@ export function useLiveImage(
 
 		async function updateDrawing() {
 			const shapes = getShapesTouching(shapeId, editor)
-			const frame = editor.getShape<LiveImageShape>(shapeId)!
+			const frame = editor.getShape<LiveImageShape>(shapeId)
+
+			if (!frame) {
+				console.warn('Frame not found')
+				return
+			}
 
 			const hash = getHashForObject([...shapes])
 			const frameName = frame.props.name

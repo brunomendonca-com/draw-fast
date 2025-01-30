@@ -1,6 +1,6 @@
 import { type } from 'os'
 
-const fileReader = new FileReader()
+const fileReader = typeof window !== 'undefined' ? new FileReader() : null
 
 let _canvas: HTMLCanvasElement | null = null
 let _ctx: CanvasRenderingContext2D | null = null
@@ -19,6 +19,10 @@ async function fastGetSvgAsString(svg: SVGElement) {
 			if (!src.startsWith('data:')) {
 				const blob = await (await fetch(src)).blob()
 				const base64 = await new Promise<string>((resolve, reject) => {
+					if (!fileReader) {
+						reject(new Error('FileReader not available'))
+						return
+					}
 					fileReader.onload = () => resolve(fileReader.result as string)
 					fileReader.onerror = () => reject(fileReader.error)
 					fileReader.readAsDataURL(blob)
